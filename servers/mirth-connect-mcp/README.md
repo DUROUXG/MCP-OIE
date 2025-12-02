@@ -1,6 +1,6 @@
 # Mirth Connect MCP Server
 
-A comprehensive Model Context Protocol (MCP) server for AI-assisted Mirth Connect / Open Integration Engine (OIE) development.
+A comprehensive Model Context Protocol (MCP) server for AI-assisted Mirth Connect / Open Integration Engine (OIE) v4.5.2 development.
 
 ## Features
 
@@ -10,6 +10,8 @@ A comprehensive Model Context Protocol (MCP) server for AI-assisted Mirth Connec
 - **Backup & Recovery**: Automatic backups before modifications, manual backup/restore
 - **Safety Features**: Confirmation required for destructive operations, automatic backup before changes
 - **Validation**: Channel XML validation and analysis
+- **File Export/Import**: Export channels/templates to local files for editing
+- **Dataset Query System**: Token-optimized data retrieval with pagination, filtering, and search
 
 ## Installation
 
@@ -104,3 +106,67 @@ Add to your Claude Code MCP configuration:
 ### Safety
 - `mirth_confirm_action` - Confirm a pending action
 - `mirth_cancel_action` - Cancel a pending action
+
+### Server Logs & Maps
+- `mirth_get_server_logs` - Get server log entries (returns datasetId)
+- `mirth_get_connection_logs` - Get connection logs for all channels (returns datasetId)
+- `mirth_get_channel_connection_logs` - Get connection logs for specific channel (returns datasetId)
+- `mirth_get_global_map` - Get global map variables
+- `mirth_get_channel_map` - Get channel-specific map
+- `mirth_get_all_maps` - Get all maps combined
+
+### File Export/Import
+- `mirth_export_channel` - Export channel XML to local file
+- `mirth_import_channel` - Import channel from local XML file
+- `mirth_export_code_template` - Export single code template to file
+- `mirth_import_code_template` - Import single code template from file
+- `mirth_export_code_template_library` - Export library with all templates
+- `mirth_import_code_template_library` - Import library (merges with existing)
+- `mirth_list_exported_files` - List exported files in directory
+
+### Dataset Query (Token Optimization)
+- `dataset_query` - Query stored dataset with filters, pagination, search
+- `dataset_get_item` - Get single item by ID from dataset
+- `dataset_list` - List all active datasets
+- `dataset_info` - Get dataset metadata and summary
+
+## Dataset Query System
+
+The Dataset Query System optimizes token usage by storing large datasets locally and returning summaries instead of raw data.
+
+### How It Works
+
+1. **Fetch data** - Tools like `mirth_get_channel_messages` return a `datasetId` + summary
+2. **Query dataset** - Use `dataset_query` to browse with pagination, filters, search
+3. **Get details** - Use `dataset_get_item` to retrieve full content of specific items
+
+### Example Workflow
+
+```
+# Step 1: Fetch messages (returns summary, not raw data)
+mirth_get_channel_messages { channelId: "abc-123" }
+→ { datasetId: "ds_xxx", totalMessages: 150, summary: { errorCount: 5, ... } }
+
+# Step 2: Browse with pagination
+dataset_query { datasetId: "ds_xxx", page: 1 }
+→ First 50 items (compact preview)
+
+# Step 3: Filter by status
+dataset_query { datasetId: "ds_xxx", filters: { status: "ERROR" } }
+→ Only error messages
+
+# Step 4: Text search
+dataset_query { datasetId: "ds_xxx", search: "patient" }
+→ Items containing "patient"
+
+# Step 5: Get full details
+dataset_get_item { datasetId: "ds_xxx", itemId: 123 }
+→ Full message content
+```
+
+### Dataset Features
+- **Auto-pagination**: 50 items per page (max 100)
+- **Sorted by ID**: Newest first for easy navigation
+- **Field filters**: Filter by any field (status, level, channelName, etc.)
+- **Text search**: Search across all fields
+- **30-minute TTL**: Datasets auto-expire to free memory

@@ -80,6 +80,26 @@ export interface ConnectorMessage {
   processingError?: string;
 }
 
+export interface ServerLogItem {
+  id: number;
+  serverId: string;
+  level: string;
+  logMessage: string;
+  dateCreated: string;
+}
+
+export interface ConnectionLogItem {
+  id: number;
+  serverId: string;
+  channelId: string;
+  channelName: string;
+  connectorId: number;
+  connectorType: string;
+  eventState: string;
+  information: string;
+  dateCreated: string;
+}
+
 export class MirthClient {
   private client: AxiosInstance;
   private sessionCookie: string | null = null;
@@ -423,6 +443,69 @@ export class MirthClient {
     }
   }
 
+  // Update a single code template (does NOT affect other templates)
+  async updateCodeTemplate(templateId: string, templateXml: string, override: boolean = true): Promise<boolean> {
+    try {
+      const response = await this.client.put(`/codeTemplates/${templateId}`, templateXml, {
+        headers: { 'Content-Type': 'application/xml' },
+        params: { override }
+      });
+      return response.status === 204 || response.status === 200;
+    } catch (error) {
+      this.handleError(error, `Failed to update code template ${templateId}`);
+    }
+  }
+
+  // Get library with full code templates included
+  async getCodeTemplateLibraryFull(libraryId: string): Promise<CodeTemplateLibrary> {
+    try {
+      const response = await this.client.get(`/codeTemplateLibraries/${libraryId}`, {
+        params: { includeCodeTemplates: true }
+      });
+      return response.data;
+    } catch (error) {
+      this.handleError(error, `Failed to get code template library ${libraryId}`);
+    }
+  }
+
+  async getCodeTemplateLibraryFullXml(libraryId: string): Promise<string> {
+    try {
+      const response = await this.client.get(`/codeTemplateLibraries/${libraryId}`, {
+        headers: { 'Accept': 'application/xml' },
+        params: { includeCodeTemplates: true }
+      });
+      return response.data;
+    } catch (error) {
+      this.handleError(error, `Failed to get code template library XML ${libraryId}`);
+    }
+  }
+
+  // Get ALL libraries (needed for safe update)
+  async getAllCodeTemplateLibrariesXml(includeCodeTemplates: boolean = true): Promise<string> {
+    try {
+      const response = await this.client.get('/codeTemplateLibraries', {
+        headers: { 'Accept': 'application/xml' },
+        params: { includeCodeTemplates }
+      });
+      return response.data;
+    } catch (error) {
+      this.handleError(error, 'Failed to get all code template libraries XML');
+    }
+  }
+
+  // DANGEROUS: Replaces ALL libraries - use updateCodeTemplate for individual updates
+  async updateAllCodeTemplateLibraries(librariesXml: string, override: boolean = true): Promise<boolean> {
+    try {
+      const response = await this.client.put('/codeTemplateLibraries', librariesXml, {
+        headers: { 'Content-Type': 'application/xml' },
+        params: { override }
+      });
+      return response.status === 204 || response.status === 200;
+    } catch (error) {
+      this.handleError(error, 'Failed to update code template libraries');
+    }
+  }
+
   // Events/Logs
   async getEvents(params?: {
     maxEventId?: number;
@@ -472,7 +555,11 @@ export class MirthClient {
     includeContent?: boolean;
   }): Promise<MessageSearchResult[]> {
     try {
-      const response = await this.client.get(`/channels/${channelId}/messages`, { params });
+      // Filter out undefined values to prevent API errors
+      const cleanParams = params ? Object.fromEntries(
+        Object.entries(params).filter(([_, v]) => v !== undefined && v !== null)
+      ) : undefined;
+      const response = await this.client.get(`/channels/${channelId}/messages`, { params: cleanParams });
       return response.data?.list?.message || response.data || [];
     } catch (error) {
       this.handleError(error, `Failed to get messages for channel ${channelId}`);
@@ -587,6 +674,84 @@ export class MirthClient {
       return response.data;
     } catch (error) {
       this.handleError(error, 'Failed to get configuration map');
+    }
+  }
+
+  // Server Logs (Extension)
+  async getServerLogs(params: {
+    fetchSize: number;
+    lastLogId?: number;
+  }): Promise<ServerLogItem[]> {
+    try {
+      const response = await this.client.get('/extensions/serverlog', { params });
+      return response.data?.list?.serverLogItem || response.data || [];
+    } catch (error) {
+      this.handleError(error, 'Failed to get server logs');
+    }
+  }
+
+  // Connection Logs (Extension)
+  async getConnectionLogs(params: {
+    fetchSize: number;
+    serverId?: string;
+    lastLogId?: number;
+  }): Promise<ConnectionLogItem[]> {
+    try {
+      const response = await this.client.get('/extensions/dashboardstatus/connectionLogs', { params });
+      return response.data?.list?.connectionLogItem || response.data || [];
+    } catch (error) {
+      this.handleError(error, 'Failed to get connection logs');
+    }
+  }
+
+  async getChannelConnectionLogs(channelId: string, params: {
+    fetchSize: number;
+    serverId?: string;
+    lastLogId?: number;
+  }): Promise<ConnectionLogItem[]> {
+    try {
+      const response = await this.client.get(`/extensions/dashboardstatus/connectionLogs/${channelId}`, { params });
+      return response.data?.list?.connectionLogItem || response.data || [];
+    } catch (error) {
+      this.handleError(error, `Failed to get connection logs for channel ${channelId}`);
+    }
+  }
+
+  // Global Maps (Extension)
+  async getGlobalMap(): Promise<Record<string, unknown>> {
+    try {
+      const response = await this.client.get('/extensions/globalmapviewer/maps/global');
+      return response.data;
+    } catch (error) {
+      this.handleError(error, 'Failed to get global map');
+    }
+  }
+
+  async getChannelMap(channelId: string): Promise<Record<string, unknown>> {
+    try {
+      const response = await this.client.get(`/extensions/globalmapviewer/maps/${channelId}`);
+      return response.data;
+    } catch (error) {
+      this.handleError(error, `Failed to get channel map for ${channelId}`);
+    }
+  }
+
+  async getAllMaps(params?: {
+    channelIds?: string[];
+    includeGlobalMap?: boolean;
+  }): Promise<Record<string, unknown>> {
+    try {
+      const queryParams: Record<string, unknown> = {};
+      if (params?.channelIds) {
+        queryParams.channelId = params.channelIds;
+      }
+      if (params?.includeGlobalMap !== undefined) {
+        queryParams.includeGlobalMap = params.includeGlobalMap;
+      }
+      const response = await this.client.get('/extensions/globalmapviewer/maps/all', { params: queryParams });
+      return response.data;
+    } catch (error) {
+      this.handleError(error, 'Failed to get all maps');
     }
   }
 }

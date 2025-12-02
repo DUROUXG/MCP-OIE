@@ -1,0 +1,61 @@
+<codeTemplateLibrary version="4.5.2">
+  <id>958196d3-2822-444f-bffc-779ea79bd63c</id>
+  <name>QTYLINK_libraries</name>
+  <revision>15</revision>
+  <lastModified>
+    <time>1764247855872</time>
+    <timezone>Europe/Paris</timezone>
+  </lastModified>
+  <description>These libraries are used with QTYLINK Targeted custom solution
+</description>
+  <includeNewChannels>false</includeNewChannels>
+  <enabledChannelIds>
+    <string>46509e68-8c10-42ed-bfcc-4bbbafda19d1</string>
+    <string>c44de290-072c-4896-8b77-19e4a051b497</string>
+    <string>5e1b22de-f773-40c8-b9e7-0b074c0e9421</string>
+    <string>f5d26ba1-6c7c-4283-a308-0195813bfa88</string>
+    <string>facaee75-bca8-4372-924d-5e0503bc1012</string>
+  </enabledChannelIds>
+  <disabledChannelIds>
+    <string>c76d56c3-34b1-4da9-a37e-1e3dbc85db72</string>
+    <string>a7f8b4c9-3e9d-5f2a-8c6b-9d3e0f2a4c6e</string>
+    <string>c4f7a3b9-2e8d-4f1a-9c5b-7d2e8f1a3c5b</string>
+    <string>d4987e76-0076-4711-9da2-3317f4a02aab</string>
+    <string>39bf1d82-c3ef-4685-be1c-dd6d1ee07c3f</string>
+    <string>e8f9a0b1-c2d3-4e5f-6a7b-8c9d0e1f2a3b</string>
+    <string>08e57240-88f4-4de8-8fe5-0960718fe249</string>
+    <string>f9e2cdf0-322a-4cf8-8a92-d76ccb1b20a1</string>
+  </disabledChannelIds>
+  <codeTemplates>
+    <codeTemplate version="4.5.2">
+      <id>3f806c6d-c305-46b4-aa1b-87f3835f7ec8</id>
+    </codeTemplate>
+    <codeTemplate version="4.5.2">
+      <id>b0dd4124-d3f3-49d8-9263-22c28ed0f5c4</id>
+    </codeTemplate>
+    <codeTemplate version="4.5.2">
+      <id>4c0923b7-8a45-46ed-b6de-3e81cf3081cb</id>
+    </codeTemplate>
+    <codeTemplate version="4.5.2">
+      <id>fd8b9349-57a7-4f2e-8fd6-b4bab09a22f0</id>
+    </codeTemplate>
+    <codeTemplate version="4.5.2">
+      <id>d627ce3b-6611-4bc3-923a-291f20d99ad6</id>
+    </codeTemplate>
+    <codeTemplate version="4.5.2">
+      <id>024437da-1cd8-4283-afc3-1ac2e411a514</id>
+    </codeTemplate>
+    <codeTemplate version="4.5.2">
+      <id>3da18c20-ff90-4661-9e84-f12653624fbb</id>
+    </codeTemplate>
+    <codeTemplate version="4.5.2">
+      <id>f1c2d860-5caa-4b7d-91ee-b037749d4e37</id>
+    </codeTemplate>
+    <codeTemplate version="4.5.2">
+      <id>3efa2f8e-458e-4d94-8cd3-e25b5992146b</id>
+    </codeTemplate>
+    <codeTemplate version="4.5.2">
+      <id>737c1a62-c04a-4f76-9e13-b05041471421</id>
+    </codeTemplate>
+  </codeTemplates>
+</codeTemplateLibrary>
