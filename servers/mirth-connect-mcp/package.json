@@ -1,0 +1,26 @@
+{
+  "name": "mirth-connect-mcp",
+  "version": "1.0.0",
+  "description": "MCP Server for Mirth Connect / Open Integration Engine AI-assisted development",
+  "type": "module",
+  "main": "dist/index.js",
+  "scripts": {
+    "build": "tsc",
+    "start": "node dist/index.js",
+    "dev": "tsx src/index.ts",
+    "watch": "tsc --watch"
+  },
+  "keywords": ["mcp", "mirth-connect", "oie", "healthcare", "integration"],
+  "author": "",
+  "license": "MIT",
+  "dependencies": {
+    "@modelcontextprotocol/sdk": "^1.0.0",
+    "axios": "^1.6.0",
+    "https-proxy-agent": "^7.0.2"
+  },
+  "devDependencies": {
+    "@types/node": "^20.10.0",
+    "tsx": "^4.6.0",
+    "typescript": "^5.3.0"
+  }
+}
