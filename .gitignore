@@ -1,7 +1,0 @@
-.claude
-node_modules/
-dist/
-*.log
-nul
-cookies.txt
-backups/
