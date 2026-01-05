@@ -1,4 +1,4 @@
-# Mirth Connect MCP Server
+#OIE MCP Server
 
 A comprehensive Model Context Protocol (MCP) server for AI-assisted Mirth Connect / Open Integration Engine (OIE) v4.5.2 development.
 
